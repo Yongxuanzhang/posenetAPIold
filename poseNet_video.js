@@ -12,9 +12,13 @@
 
 // ============= IMPORTANT ==============================
 // BELOW ARE THE VARIABLES TO CHANGE BASED ON YOUR VIDEO
-let canvas_height = 720
-let canvas_width = 1280
-let video_path = 'mj_smooth_criminal.mp4'
+//let canvas_height = 720
+//let canvas_width = 1280
+//let video_path = 'mj_smooth_criminal.mp4'
+
+let canvas_height = 1920
+let canvas_width = 1080
+let video_path = 'IMG_1998.mp4'
 // ======================================================
 
 // variable for our video file
@@ -23,6 +27,7 @@ let video;
 let poseNet;
 // output of our ML model is stores in this
 let poses = [];
+let output=[1]
 
 /* function setup() is by P5.js:
       it is the first function that is executed and runs only once.
@@ -56,6 +61,7 @@ function setup() {
   */
   poseNet.on('pose', function(results) {
     poses = results;
+    console.log(poses)
   });
 
  /* Hide the video output for now.
@@ -63,7 +69,12 @@ function setup() {
      poses detected later on.
   */
   video.hide();
+  var button = document.getElementById("export");
+  button.addEventListener("click", download, false);
 }
+
+
+
 
 /* function called when the model is ready to use.
    set the #status field to Model Loaded for the
@@ -103,6 +114,9 @@ function drawKeypoints(){
     Remember we saved all the result from the poseNet output in "poses" array.
     Loop through every pose and draw keypoints
    */
+  //console.log(poses);
+  output=output.concat(poses)
+
   for (let i = 0; i < poses.length; i++) {
     // For each pose detected, loop through all the keypoints
     let pose = poses[i].pose;
@@ -127,13 +141,6 @@ function drawKeypoints(){
   }
 }
 
-function createCanvas(w, h){
-  const canvas = document.createElement("canvas"); 
-  canvas.width  = w;
-  canvas.height = h;
-  document.body.appendChild(canvas);
-  return canvas;
-}
 
 // A function to draw the skeletons
 function drawSkeleton() {
@@ -162,5 +169,28 @@ function drawSkeleton() {
     }
   }
 }
-setup();
-console.log('call js')
+
+//For Web to save poses as JSON file
+function download(content, fileName, contentType) {
+  var a = document.createElement("a");
+  let data=output
+  var content = JSON.stringify(data);
+  var file = new Blob([content], {type: contentType});
+  a.href = URL.createObjectURL(file);
+  a.download = fileName;
+  a.click();
+}
+//var content = JSON.stringify(output);
+//download(content, 'json.txt', 'text/plain');
+
+
+
+/*
+var button = document.getElementById("export");
+button.addEventListener("click", saveHandler, false);
+function saveHandler() {
+  let data = output
+  var content = JSON.stringify(data);
+  var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  saveAs(blob, "save.json");
+}*/
