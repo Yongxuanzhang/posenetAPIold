@@ -38,8 +38,9 @@ try {
 			//number : 180,
 			//file_name : 'my_frame'
 		}, function (error, files) {
-			if (!error)
-				console.log('Frames: ' + files);
+            if (!error)
+                console.log("")
+				//console.log('frames: ' + files);
         });
         console.log(fr)
 	}, function (err) {
@@ -111,26 +112,31 @@ async function tasks(){
    
  
 let data = JSON.stringify(poses);
-fs.writeFileSync('save.json', data);
-console.log(poses)
-return poses
+fs.writeFileSync('save2.json', data);
+//console.log(poses)
+
 }
 
 
 tasks();
-
+return poses
 }
 
 const express = require('express')
 const app = express()
 const port = 3000
 
-app.get('/', async (req, res) => {
-    
- 
-    console.log("********")
-    res.end(JSON.stringify(await posenetWrapper(video_name)))
-    //res.sendfile('save.json'); 
+app.get('/poseAPI/:video', async (req, res) => {
+    console.log(req.params.video)
+
+    video=req.params.video+'.mov'
+    console.log(video)
+    //senddata=JSON.stringify(await posenetWrapper(video_name))
+    //console.log(senddata)
+    //res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(await posenetWrapper(video)))
+    //res.sendfile('save2.json'); 
+
   })
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
 //posenetWrapper(video_name);
